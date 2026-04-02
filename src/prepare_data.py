@@ -194,6 +194,8 @@ def prepare_dataset(
     print("\nAfter cleaning:", df.shape)
 
     basic_infos(df)
+    
+    # answers the question: do we need class weights or not?
     print(f"\nTarget values: {df['target'].value_counts()}")
     print(f"\nTarget proportions: {df['target'].value_counts(normalize=True)}")
 
