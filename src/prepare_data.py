@@ -3,7 +3,7 @@ from typing import List
 import pandas as pd
 
 
-DEFAULT_COLUMNS: List[str] = [ # The raw dataset contains several many columns
+DEFAULT_COLUMNS: List[str] = [ # The raw dataset contains many columns
     "loan_amnt",               # I keep some of the useful ones
     "term",
     "int_rate",
@@ -72,6 +72,69 @@ def save_dataframe(df: pd.DataFrame, output_path: str) -> None:
     df.to_csv(output_path, index=False)
     print(f"\nSaved processed data to: {output_path}")
 
+
+def define_target(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Keep only fully resolved loans and create binary target.
+    The other statuses are ambiguous and not useful.
+
+    Returns:
+        DataFrame with 'target' column
+    """
+    df = df.copy()
+
+    df = df[df["loan_status"].isin(["Fully Paid", "Charged Off"])]
+
+    df["target"] = df["loan_status"].apply(
+        lambda x: 1 if x == "Charged Off" else 0
+    )
+
+    df = df.drop(columns=["loan_status"])
+
+    return df
+
+
+##############
+# Some necessary cleanups.
+# I am replacing strings with numerical values, more suitable for what comes next.
+
+
+def clean_term(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Extract the term column as numeric.
+    """
+    df = df.copy()
+    df["term"] = df["term"].str.extract(r"(\d+)").astype(int)
+    return df
+
+
+def clean_interest_rate(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    df["int_rate"] = df["int_rate"].str.replace("%", "").astype(float)
+    return df
+
+
+def clean_emp_length(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    mapping = {
+        "< 1 year": 0,
+        "1 year": 1,
+        "2 years": 2,
+        "3 years": 3,
+        "4 years": 4,
+        "5 years": 5,
+        "6 years": 6,
+        "7 years": 7,
+        "8 years": 8,
+        "9 years": 9,
+        "10+ years": 10
+    }
+    df["emp_length"] = df["emp_length"].map(mapping)
+
+    return df
+
+
+#################################################################################
 
 def prepare_dataset(
     input_path: str,
