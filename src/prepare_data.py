@@ -81,6 +81,13 @@ def define_target(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with 'target' column
     """
+
+    if "loan_status" not in df.columns:
+        raise ValueError(
+            "Column 'loan_status' not found. "
+            "Are you using an already processed dataset?"
+        )
+
     df = df.copy()
 
     df = df[df["loan_status"].isin(["Fully Paid", "Charged Off"])]
@@ -167,6 +174,19 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+#############
+# C++ preparation
+
+def split_features_target(df: pd.DataFrame):
+    X = df.drop(columns=["target"])
+    y = df["target"]
+    return X, y
+
+def save_for_cpp(X: pd.DataFrame, y: pd.Series, base_path: str):
+    X.to_csv(f"{base_path}_X.csv", index=False)
+    y.to_csv(f"{base_path}_y.csv", index=False)
+
+
 #################################################################################
 
 def prepare_dataset(
@@ -194,12 +214,17 @@ def prepare_dataset(
     print("\nAfter cleaning:", df.shape)
 
     basic_infos(df)
-    
+
     # answers the question: do we need class weights or not?
     print(f"\nTarget values: {df['target'].value_counts()}")
     print(f"\nTarget proportions: {df['target'].value_counts(normalize=True)}")
 
+    df = clean_dataset(df)
     save_dataframe(df, output_path)
+
+    # For C++
+    X, y = split_features_target(df)
+    save_for_cpp(X, y, "data/processed/lendingclub")
     return df
 
 
