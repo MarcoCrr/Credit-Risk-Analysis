@@ -174,6 +174,32 @@ def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+########################################
+# Dataset processed in two steps: raw -> step1 -> clean
+
+def create_subset(input_path: str, output_path: str, columns, nrows):
+    df = load_subset(input_path, columns, nrows)
+
+    save_dataframe(df, output_path)
+    return df
+
+
+def process_subset(input_path: str, output_path: str):
+    df = pd.read_csv(input_path)
+    print("\nBefore cleaning:", df.shape)
+
+    df = clean_dataset(df)
+    print("\nAfter cleaning:", df.shape)
+
+    basic_infos(df)
+    # Answers the question: do we need class weights or not?
+    print(f"\nTarget values: {df['target'].value_counts()}")
+    print(f"\nTarget proportions: {df['target'].value_counts(normalize=True)}")
+
+    save_dataframe(df, output_path)
+    return df
+
+
 #############
 # C++ preparation
 
@@ -187,55 +213,28 @@ def save_for_cpp(X: pd.DataFrame, y: pd.Series, base_path: str):
     y.to_csv(f"{base_path}_y.csv", index=False)
 
 
-#################################################################################
-
-def prepare_dataset(
-    input_path: str,
-    output_path: str,
-    columns: List[str] = DEFAULT_COLUMNS,
-    nrows: int = 150000
-) -> pd.DataFrame:
-    """
-    Full pipeline: load → inspect → save.
-
-    Args:
-        input_path: Raw dataset path
-        output_path: Output dataset path
-        columns: Columns to keep
-        nrows: Number of rows to load
-
-    Returns:
-        Processed DataFrame
-    """
-    df = load_subset(input_path, columns, nrows)
-    print("\nBefore cleaning:", df.shape)
-
-    df = clean_dataset(df)
-    print("\nAfter cleaning:", df.shape)
-
-    basic_infos(df)
-
-    # answers the question: do we need class weights or not?
-    print(f"\nTarget values: {df['target'].value_counts()}")
-    print(f"\nTarget proportions: {df['target'].value_counts(normalize=True)}")
-
-    df = clean_dataset(df)
-    save_dataframe(df, output_path)
-
-    # For C++
-    X, y = split_features_target(df)
-    save_for_cpp(X, y, "data/processed/lendingclub")
-    return df
-
-
 ###############################################################################
 
-if __name__ == "__main__":
-    INPUT_PATH = "data/raw/accepted_2007_to_2018Q4.csv"
-    OUTPUT_PATH = "data/processed/lendingclub_step1.csv"
 
-    prepare_dataset(
-        input_path=INPUT_PATH,
-        output_path=OUTPUT_PATH,
+if __name__ == "__main__":
+    RAW_PATH = "data/raw/accepted_2007_to_2018Q4.csv"
+    INTERIM_PATH = "data/processed/lendingclub_step1.csv"
+    PROCESSED_PATH = "data/processed/lendingclub_clean.csv" # 2-step cleaning
+
+    # Step 1: create subset
+    create_subset(
+        input_path=RAW_PATH,
+        output_path=INTERIM_PATH,
+        columns=DEFAULT_COLUMNS,
         nrows=150000
     )
+
+    # Step 2: clean subset
+    df = process_subset(
+        input_path=INTERIM_PATH,
+        output_path=PROCESSED_PATH
+    )
+
+    # Step 3: split for C++
+    X, y = split_features_target(df)
+    save_for_cpp(X, y, "data/processed/lendingclub")
