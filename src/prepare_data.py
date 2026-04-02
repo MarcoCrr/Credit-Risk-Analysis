@@ -54,7 +54,7 @@ def basic_infos(df: pd.DataFrame) -> None:
     print(df.shape)
 
     print("\nHead:")
-    print(df.head())
+    print(df.head(n=5))
 
     print("\n Missing values:")
     print(df.isnull().sum())
@@ -110,7 +110,7 @@ def clean_term(df: pd.DataFrame) -> pd.DataFrame:
 
 def clean_interest_rate(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    df["int_rate"] = df["int_rate"].str.replace("%", "").astype(float)
+    df["int_rate"] = df["int_rate"].replace("%", "", regex=True).astype(float)
     return df
 
 
@@ -188,6 +188,12 @@ def prepare_dataset(
         Processed DataFrame
     """
     df = load_subset(input_path, columns, nrows)
+    print("\nBefore cleaning:", df.shape)
+
+    df = clean_dataset(df)
+    print("\nAfter cleaning:", df.shape)
+
+
     basic_infos(df)
     save_dataframe(df, output_path)
     return df
