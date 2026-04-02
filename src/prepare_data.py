@@ -127,9 +127,42 @@ def clean_emp_length(df: pd.DataFrame) -> pd.DataFrame:
         "7 years": 7,
         "8 years": 8,
         "9 years": 9,
-        "10+ years": 10
+        "10+ years": 10     # no more info than that, so I just put 10
     }
     df["emp_length"] = df["emp_length"].map(mapping)
+
+    return df
+
+
+def clean_home_ownership(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    mapping = {
+        "RENT": 0,
+        "OWN": 1,
+        "MORTGAGE": 2,
+        "OTHER": 3,
+        "NONE": 3,
+        "ANY": 3
+    }
+
+    df["home_ownership"] = df["home_ownership"].map(mapping)
+
+    return df
+
+
+def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Apply all (the above) cleaning steps to the dataset.
+    """
+    df = define_target(df)
+    df = clean_term(df)
+    df = clean_interest_rate(df)
+    df = clean_emp_length(df)
+    df = clean_home_ownership(df)
+
+    # Drop rows with missing values (for now?)
+    df = df.dropna()
 
     return df
 
