@@ -141,8 +141,8 @@ def clean_home_ownership(df: pd.DataFrame) -> pd.DataFrame:
         "RENT": 0,
         "OWN": 1,
         "MORTGAGE": 2,
-        "OTHER": 3,
-        "NONE": 3,
+        "OTHER": 3,     # Design choice:
+        "NONE": 3,      # non-informative/unclear categories grouped together
         "ANY": 3
     }
 
@@ -193,8 +193,10 @@ def prepare_dataset(
     df = clean_dataset(df)
     print("\nAfter cleaning:", df.shape)
 
-
     basic_infos(df)
+    print(f"\nTarget values: {df['target'].value_counts()}")
+    print(f"\nTarget proportions: {df['target'].value_counts(normalize=True)}")
+
     save_dataframe(df, output_path)
     return df
 
