@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "data/DataLoader.h"
+#include "io/DataLoader.h"
 #include "models/LogisticRegression.h"
 
 int main() {
