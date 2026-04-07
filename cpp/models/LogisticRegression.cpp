@@ -14,26 +14,26 @@ void LogisticRegression::train(const Eigen::MatrixXd& X,
                                const Eigen::VectorXd& y,
                                double lr, int epochs) {
 
-    int n = X.rows();
+    const int n = X.rows();
+    const Eigen::MatrixXd X_T = X.transpose();
 
     for (int epoch = 0; epoch < epochs; ++epoch) {
 
-        Eigen::VectorXd z = X * weights + Eigen::VectorXd::Ones(n) * bias;
+        Eigen::VectorXd z = (X * weights).array() + bias;
         Eigen::VectorXd preds = sigmoid(z);
 
         Eigen::VectorXd error = preds - y;
 
-        Eigen::VectorXd grad_w = (X.transpose() * error) / n;
+        Eigen::VectorXd grad_w = (X_T * error) / n;
         double grad_b = error.mean();
 
-        weights -= lr * grad_w;
+        weights.noalias() -= lr * grad_w;
         bias -= lr * grad_b;
     }
 }
 
 Eigen::VectorXd LogisticRegression::predict_proba(const Eigen::MatrixXd& X) {
-    int n = X.rows();
-    Eigen::VectorXd z = X * weights + Eigen::VectorXd::Ones(n) * bias;
+    Eigen::VectorXd z = (X * weights).array() + bias;
     return sigmoid(z);
 }
 
