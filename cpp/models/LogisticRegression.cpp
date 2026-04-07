@@ -1,3 +1,4 @@
+#include <iostream>
 #include "LogisticRegression.h"
 #include <cmath>
 #include <tuple>
