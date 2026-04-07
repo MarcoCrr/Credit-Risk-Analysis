@@ -8,8 +8,8 @@ __pycache__/
 venv/
 .env/
 
-# Jupyter
-.ipynb_checkpoints/
+# cpp/
+cpp/model
 
 # Data
 data/*
