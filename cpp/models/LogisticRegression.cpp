@@ -68,3 +68,18 @@ train_test_split(const Eigen::MatrixXd& X,
 
     return {X_train, X_test, y_train, y_test};
 }
+
+
+double accuracy(const Eigen::VectorXd& y_true,
+                const Eigen::VectorXd& y_pred) {
+
+    int correct = 0;
+
+    for (int i = 0; i < y_true.size(); ++i) {
+        if (y_true(i) == y_pred(i)) {
+            correct++;
+        }
+    }
+
+    return static_cast<double>(correct) / y_true.size();
+}
