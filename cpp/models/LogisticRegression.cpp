@@ -83,3 +83,21 @@ double accuracy(const Eigen::VectorXd& y_true,
 
     return static_cast<double>(correct) / y_true.size();
 }
+
+
+void confusion_matrix(const Eigen::VectorXd& y_true,
+                      const Eigen::VectorXd& y_pred) {
+
+    int tp = 0, tn = 0, fp = 0, fn = 0;
+
+    for (int i = 0; i < y_true.size(); ++i) {
+        if (y_true(i) == 1 && y_pred(i) == 1) tp++;
+        else if (y_true(i) == 0 && y_pred(i) == 0) tn++;
+        else if (y_true(i) == 0 && y_pred(i) == 1) fp++;
+        else if (y_true(i) == 1 && y_pred(i) == 0) fn++;
+    }
+
+    std::cout << "\nConfusion Matrix:\n";
+    std::cout << "TP: " << tp << "  FP: " << fp << "\n";
+    std::cout << "FN: " << fn << "  TN: " << tn << "\n";
+}
