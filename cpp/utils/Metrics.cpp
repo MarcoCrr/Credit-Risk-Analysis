@@ -1,5 +1,7 @@
 #include "Metrics.h"
 #include <iostream>
+#include <random>
+#include <algorithm>
 
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
            Eigen::VectorXd, Eigen::VectorXd>
@@ -8,14 +10,31 @@ train_test_split(const Eigen::MatrixXd& X,
                  double test_ratio) {
 
     int n = X.rows();
+
+    // Create shuffled indices
+    std::vector<int> indices(n);
+    for (int i = 0; i < n; ++i) indices[i] = i;
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+
     int test_size = static_cast<int>(n * test_ratio);
     int train_size = n - test_size;
 
-    Eigen::MatrixXd X_train = X.topRows(train_size);
-    Eigen::MatrixXd X_test  = X.bottomRows(test_size);
+    Eigen::MatrixXd X_train(train_size, X.cols());
+    Eigen::MatrixXd X_test(test_size, X.cols());
+    Eigen::VectorXd y_train(train_size);
+    Eigen::VectorXd y_test(test_size);
 
-    Eigen::VectorXd y_train = y.head(train_size);
-    Eigen::VectorXd y_test  = y.tail(test_size);
+    for (int i = 0; i < train_size; ++i) {
+        X_train.row(i) = X.row(indices[i]);
+        y_train(i) = y(indices[i]);
+    }
+
+    for (int i = 0; i < test_size; ++i) {
+        X_test.row(i) = X.row(indices[train_size + i]);
+        y_test(i) = y(indices[train_size + i]);
+    }
 
     return {X_train, X_test, y_train, y_test};
 }
