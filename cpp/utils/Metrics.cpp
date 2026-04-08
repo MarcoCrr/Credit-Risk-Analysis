@@ -3,6 +3,8 @@
 #include <random>
 #include <algorithm>
 
+
+
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
            Eigen::VectorXd, Eigen::VectorXd>
 train_test_split(const Eigen::MatrixXd& X,
@@ -39,6 +41,7 @@ train_test_split(const Eigen::MatrixXd& X,
     return {X_train, X_test, y_train, y_test};
 }
 
+
 double accuracy(const Eigen::VectorXd& y_true,
                 const Eigen::VectorXd& y_pred) {
 
@@ -52,6 +55,7 @@ double accuracy(const Eigen::VectorXd& y_true,
 
     return static_cast<double>(correct) / y_true.size();
 }
+
 
 void confusion_matrix(const Eigen::VectorXd& y_true,
                       const Eigen::VectorXd& y_pred) {
@@ -68,4 +72,19 @@ void confusion_matrix(const Eigen::VectorXd& y_true,
     std::cout << "\nConfusion Matrix:\n";
     std::cout << "TP: " << tp << "  FP: " << fp << "\n";
     std::cout << "FN: " << fn << "  TN: " << tn << "\n";
+}
+
+
+void normalize(Eigen::MatrixXd& X) {
+    for (int j = 0; j < X.cols(); ++j) {
+        double mean = X.col(j).mean();
+
+        double stddev = std::sqrt(
+            (X.col(j).array() - mean).square().mean()
+        );
+
+        if (stddev > 1e-8) { // Avoid division by zero
+            X.col(j) = (X.col(j).array() - mean) / stddev; // mean~0, stddev~1
+        }
+    }
 }

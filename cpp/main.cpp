@@ -10,6 +10,7 @@ int main() {
     Eigen::MatrixXd X = DataLoader::loadFeatures("data/processed/lendingclub_X.csv");
     Eigen::VectorXd y = DataLoader::loadTarget("data/processed/lendingclub_y.csv");
 
+    normalize(X);
     auto [X_train, X_test, y_train, y_test] = train_test_split(X, y);
     
     LogisticRegression model(X.cols());

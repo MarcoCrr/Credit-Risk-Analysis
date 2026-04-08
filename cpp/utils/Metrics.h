@@ -15,3 +15,5 @@ double accuracy(const Eigen::VectorXd& y_true,
 
 void confusion_matrix(const Eigen::VectorXd& y_true,
                       const Eigen::VectorXd& y_pred);
+
+void normalize(Eigen::MatrixXd& X);
