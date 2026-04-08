@@ -47,5 +47,5 @@ Eigen::VectorXd LogisticRegression::predict_proba(const Eigen::MatrixXd& X) {
 
 Eigen::VectorXd LogisticRegression::predict(const Eigen::MatrixXd& X) {
     Eigen::VectorXd probs = predict_proba(X);
-    return (probs.array() > 0.5).cast<double>();
+    return (probs.array() > 0.3).cast<double>(); // a bit less than 0.5, imbalanced dataset
 }
