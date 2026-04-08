@@ -2,6 +2,7 @@
 #include <fstream>
 #include "io/DataLoader.h"
 #include "models/LogisticRegression.h"
+#include "utils/Metrics.h"
 
 int main() {
     std::ifstream test("data/processed/lendingclub_X.csv");
