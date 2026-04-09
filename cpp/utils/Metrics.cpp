@@ -16,8 +16,9 @@ train_test_split(const Eigen::MatrixXd& X,
     // Create shuffled indices
     std::vector<int> indices(n);
     for (int i = 0; i < n; ++i) indices[i] = i;
-    std::random_device rd;
-    std::mt19937 g(rd());
+    //std::random_device rd; // random seed
+    //std::mt19937 g(rd());
+    std::mt19937 g(42); // fixed seed for reproducibility
     std::shuffle(indices.begin(), indices.end(), g);
 
     int test_size = static_cast<int>(n * test_ratio);
