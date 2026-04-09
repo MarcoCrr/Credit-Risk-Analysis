@@ -121,3 +121,13 @@ double recall(const Eigen::VectorXd& y_true,
     if (tp + fn == 0) return 0.0;
     return static_cast<double>(tp) / (tp + fn);
 }
+
+double f1_score(const Eigen::VectorXd& y_true,
+                const Eigen::VectorXd& y_pred) {
+
+    double p = precision(y_true, y_pred);
+    double r = recall(y_true, y_pred);
+
+    if (p + r == 0) return 0.0;
+    return 2 * (p * r) / (p + r);
+}

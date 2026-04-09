@@ -27,3 +27,6 @@ double precision(const Eigen::VectorXd& y_true,
 
 double recall(const Eigen::VectorXd& y_true,
               const Eigen::VectorXd& y_pred);
+
+double f1_score(const Eigen::VectorXd& y_true,
+                const Eigen::VectorXd& y_pred);
