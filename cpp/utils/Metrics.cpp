@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-
+// Split and shuffling
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
            Eigen::VectorXd, Eigen::VectorXd>
 train_test_split(const Eigen::MatrixXd& X,
@@ -42,20 +42,22 @@ train_test_split(const Eigen::MatrixXd& X,
 }
 
 
-double accuracy(const Eigen::VectorXd& y_true,
-                const Eigen::VectorXd& y_pred) {
+// Normalization
+void normalize(Eigen::MatrixXd& X) {
+    for (int j = 0; j < X.cols(); ++j) {
+        double mean = X.col(j).mean();
 
-    int correct = 0;
+        double stddev = std::sqrt(
+            (X.col(j).array() - mean).square().mean()
+        );
 
-    for (int i = 0; i < y_true.size(); ++i) {
-        if (y_true(i) == y_pred(i)) {
-            correct++;
+        if (stddev > 1e-8) { // Avoid division by zero
+            X.col(j) = (X.col(j).array() - mean) / stddev; // mean~0, stddev~1
         }
     }
-
-    return static_cast<double>(correct) / y_true.size();
 }
 
+// Metrics
 
 void confusion_matrix(const Eigen::VectorXd& y_true,
                       const Eigen::VectorXd& y_pred) {
@@ -74,17 +76,32 @@ void confusion_matrix(const Eigen::VectorXd& y_true,
     std::cout << "FN: " << fn << "  TN: " << tn << "\n";
 }
 
+double accuracy(const Eigen::VectorXd& y_true,
+                const Eigen::VectorXd& y_pred) {
 
-void normalize(Eigen::MatrixXd& X) {
-    for (int j = 0; j < X.cols(); ++j) {
-        double mean = X.col(j).mean();
+    int correct = 0;
 
-        double stddev = std::sqrt(
-            (X.col(j).array() - mean).square().mean()
-        );
-
-        if (stddev > 1e-8) { // Avoid division by zero
-            X.col(j) = (X.col(j).array() - mean) / stddev; // mean~0, stddev~1
+    for (int i = 0; i < y_true.size(); ++i) {
+        if (y_true(i) == y_pred(i)) {
+            correct++;
         }
     }
+
+    return static_cast<double>(correct) / y_true.size();
+}
+
+double precision(const Eigen::VectorXd& y_true,
+                 const Eigen::VectorXd& y_pred) {
+
+    int tp = 0, fp = 0;
+
+    for (int i = 0; i < y_true.size(); ++i) {
+        if (y_pred(i) == 1) {
+            if (y_true(i) == 1) tp++;
+            else fp++;
+        }
+    }
+
+    if (tp + fp == 0) return 0.0;
+    return static_cast<double>(tp) / (tp + fp);
 }
