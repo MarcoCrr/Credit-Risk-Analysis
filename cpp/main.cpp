@@ -24,6 +24,10 @@ int main() {
     std::cout << "Test Accuracy: " << acc << std::endl;
 
     confusion_matrix(y_test, preds);
+    
+    std::cout << "Precision: " << precision(y_test, preds) << std::endl;
+    std::cout << "Recall: " << recall(y_test, preds) << std::endl;
+    std::cout << "F1 Score: " << f1_score(y_test, preds) << std::endl;
 
     return 0;
 }
