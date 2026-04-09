@@ -42,7 +42,7 @@ train_test_split(const Eigen::MatrixXd& X,
 }
 
 
-// Normalization
+// Normalization (scales are usually different in this context)
 void normalize(Eigen::MatrixXd& X) {
     for (int j = 0; j < X.cols(); ++j) {
         double mean = X.col(j).mean();
@@ -57,8 +57,8 @@ void normalize(Eigen::MatrixXd& X) {
     }
 }
 
-// Metrics
 
+// Metrics
 void confusion_matrix(const Eigen::VectorXd& y_true,
                       const Eigen::VectorXd& y_pred) {
 
