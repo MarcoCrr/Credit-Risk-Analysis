@@ -105,3 +105,19 @@ double precision(const Eigen::VectorXd& y_true,
     if (tp + fp == 0) return 0.0;
     return static_cast<double>(tp) / (tp + fp);
 }
+
+double recall(const Eigen::VectorXd& y_true,
+              const Eigen::VectorXd& y_pred) {
+
+    int tp = 0, fn = 0;
+
+    for (int i = 0; i < y_true.size(); ++i) {
+        if (y_true(i) == 1) {
+            if (y_pred(i) == 1) tp++;
+            else fn++;
+        }
+    }
+
+    if (tp + fn == 0) return 0.0;
+    return static_cast<double>(tp) / (tp + fn);
+}

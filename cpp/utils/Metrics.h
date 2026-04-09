@@ -24,3 +24,6 @@ void confusion_matrix(const Eigen::VectorXd& y_true,
 
 double precision(const Eigen::VectorXd& y_true,
                  const Eigen::VectorXd& y_pred);
+
+double recall(const Eigen::VectorXd& y_true,
+              const Eigen::VectorXd& y_pred);
