@@ -3,6 +3,8 @@
 #include "io/DataLoader.h"
 #include "models/LogisticRegression.h"
 #include "utils/Metrics.h"
+#include "risk/Portfolio.h"
+#include "risk/Simulator.h"
 
 int main() {
     std::ifstream test("data/processed/lendingclub_X.csv");
@@ -17,7 +19,11 @@ int main() {
 
     model.train(X_train, y_train, 0.01, 1000);
 
-    Eigen::VectorXd preds = model.predict(X_test);
+    Eigen::VectorXd probs = model.predict_proba(X_test);
+    double threshold = 0.3;
+    Eigen::VectorXd preds = (probs.array() > threshold).cast<double>();
+
+    // Eigen::VectorXd preds = model.predict(X_test);   // OLD
     std::cout << "Training complete!" << std::endl;
 
     double acc = accuracy(y_test, preds);
@@ -28,6 +34,24 @@ int main() {
     std::cout << "\nPrecision: " << precision(y_test, preds) << std::endl;
     std::cout << "Recall: " << recall(y_test, preds) << std::endl;
     std::cout << "F1 Score: " << f1_score(y_test, preds) << std::endl;
+
+    
+    // risk-related
+    // Build portfolio
+    auto portfolio = Portfolio::build(X_test, probs);
+
+    // Run simulation
+    auto losses = Simulator::run(portfolio, 1000);
+
+    // Risk metrics
+    std::cout << "Expected Loss: "
+            << Simulator::expected_loss(losses) << std::endl;
+
+    std::cout << "VaR 95%: "
+            << Simulator::var(losses, 0.95) << std::endl;
+
+    std::cout << "VaR 99%: "
+            << Simulator::var(losses, 0.99) << std::endl;
 
     return 0;
 }
