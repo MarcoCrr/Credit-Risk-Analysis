@@ -41,7 +41,12 @@ int main() {
     auto portfolio = Portfolio::build(X_test, probs);
 
     // Run simulation
-    auto losses = Simulator::run(portfolio, 1000);
+    // Independendt defaults (old)
+    // auto losses = Simulator::run(portfolio, 1000);
+    
+    // Correlated defaults
+    double rho = 0.2;  // 0.1–0.3
+    auto losses = Simulator::run_correlated(portfolio, 1000, rho);
 
     // Risk metrics
     std::cout << "Expected Loss: "
