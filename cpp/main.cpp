@@ -22,8 +22,8 @@ int main() {
     Eigen::VectorXd probs = model.predict_proba(X_test);
     double threshold = 0.3;
     Eigen::VectorXd preds = (probs.array() > threshold).cast<double>();
-
     // Eigen::VectorXd preds = model.predict(X_test);   // OLD
+    
     std::cout << "Training complete!" << std::endl;
 
     double acc = accuracy(y_test, preds);
