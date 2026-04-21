@@ -8,7 +8,7 @@ The system:
 1. Preprocesses loan data
 2. Trains a logistic regression model to estimate default probabilities (PD)
 3. Evaluates model performance
-4. Simulates portfolio losses using Monte Carlo methods
+4. Simulates portfolio losses using Monte Carlo methods, in a Gaussian copula framework
 5. Computes key risk metrics such as Expected Loss and Value at Risk (VaR)
 
 
@@ -90,7 +90,7 @@ A portfolio of loans is simulated multiple times:
 
 - For each loan:
   - Draw a random number
-  - Default occurs if `u < PD`
+  - Default occurs if `u < PD` (_if no Gaussian copula is assumed, see below_)
 - Compute total portfolio loss
 - Repeat over many simulations
 
@@ -109,20 +109,47 @@ From simulated losses:
   - VaR 95% → loss threshold not exceeded in 95% of cases  
   - VaR 99% → extreme risk estimate  
 
+---
 
+### 7. Correlated Defaults (Gaussian Copula Extension)
+
+The initial model assumes that loan defaults are independent, not realistic in practice (but still a nice start for coding purposes).  
+Indeed, defaults tend to cluster during adverse economic conditions. To address this, the model is extended using a **Gaussian copula framework**.
+
+#### Model Description
+
+Each loan is associated with a latent variable:
+```
+Z_i = √ρ · M + √(1 - ρ) · ε_i
+```
+Where:
+- `M` is a common systemic (market) factor
+- `ε_i` is an idiosyncratic noise term
+- `ρ` is the asset correlation parameter
+
+A default occurs if:
+```
+Z_i < Φ⁻¹(PD_i) ,
+```
+where:
+- `PD_i` is the predicted probability of default from the logistic regression model
+- `Φ⁻¹` is the inverse standard normal Cumulative Distribution Function
+
+Typically, this leads to an increase of VaR, meaning that correlated defaults usually lead to an increased portfolio risk.
 
 ---
 
 ## Some comments
 
 - Accuracy alone is misleading for imbalanced datasets like this one
-- Threshold tuning is essential in this context
+- Threshold tuning is essential in this context. _0.3_ has been set as default value.
+- Correlation is controlled via parameter `ρ` (typically 0.1–0.3, here set as _0.2_)
 
 ---
 
 ## Future Improvements
 
-- Correlated defaults (Gaussian copula) ?
+- Stress testing ?
 - ...?
 
 ---
