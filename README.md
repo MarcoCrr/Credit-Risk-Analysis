@@ -142,7 +142,7 @@ Typically, this leads to an increase of VaR, meaning that correlated defaults us
 ## Some comments
 
 - Accuracy alone is misleading for imbalanced datasets like this one
-- Threshold tuning is essential in this context. _0.3_ has been set as default value.
+- Threshold tuning for probability of default is essential in this context (imbalanced default/no-default ratio). _0.3_ has been set as default value.
 - Correlation is controlled via parameter `ρ` (typically 0.1–0.3, here set as _0.2_)
 
 ---
