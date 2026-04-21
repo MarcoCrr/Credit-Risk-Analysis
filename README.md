@@ -131,13 +131,13 @@ From simulated losses:
 
 Compile from project root:
 ```
-g++ -I /usr/include/eigen3
-cpp/main.cpp
-cpp/io/DataLoader.cpp
-cpp/models/LogisticRegression.cpp
-cpp/utils/Metrics.cpp
-cpp/risk/Portfolio.cpp
-cpp/risk/Simulator.cpp
+g++ -I /usr/include/eigen3 \
+cpp/main.cpp \
+cpp/io/DataLoader.cpp \
+cpp/models/LogisticRegression.cpp \
+cpp/utils/Metrics.cpp \
+cpp/risk/Portfolio.cpp \
+cpp/risk/Simulator.cpp \
 -o cpp/model
 ```
 
