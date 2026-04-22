@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements a **credit risk analysis pipeline** combining Python for data preparation and C++ for modeling and risk simulation, using the Credit Lending Club Loan data. I will expand the project, if time allows.
+This project implements a **credit risk analysis pipeline** combining Python for data preparation and C++ for modeling and risk simulation, using the Credit Lending Club Loan data. I will expand the project, when time allows.
 
 The system:
 1. Preprocesses loan data
