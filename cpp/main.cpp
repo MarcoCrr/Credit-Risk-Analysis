@@ -5,6 +5,9 @@
 #include "utils/Metrics.h"
 #include "risk/Portfolio.h"
 #include "risk/Simulator.h"
+#include "risk/Scenario.h"
+#include "risk/RiskReport.h"
+#include "risk/RiskAnalyzer.h"
 
 int main() {
     std::ifstream test("data/processed/lendingclub_X.csv");
@@ -39,24 +42,29 @@ int main() {
     // risk-related
     // Build portfolio
     auto portfolio = Portfolio::build(X_test, probs);
-
-    // Run simulation
-    // Independendt defaults (old)
-    // auto losses = Simulator::run(portfolio, 1000);
     
-    // Correlated defaults
-    double rho = 0.2;  // 0.1–0.3
-    auto losses = Simulator::run_correlated(portfolio, 1000, rho);
+    // Correlated defaults (old)
+    // double rho = 0.2;  // 0.1–0.3
+    // auto losses = Simulator::run_correlated(portfolio, 1000, rho);
+
+    Scenario baseline{
+        "Baseline",
+        1.0, // pd_multiplier
+        0.2, // rho
+        1.0  // lgd_multiplier
+        };
+
+    RiskReport report = RiskAnalyzer::analyze(portfolio, baseline);
 
     // Risk metrics
     std::cout << "Expected Loss: "
-            << Simulator::expected_loss(losses) << std::endl;
+            << report.expected_loss << std::endl;
 
     std::cout << "VaR 95%: "
-            << Simulator::var(losses, 0.95) << std::endl;
+            << report.var95 << std::endl;
 
     std::cout << "VaR 99%: "
-            << Simulator::var(losses, 0.99) << std::endl;
+            << report.var99 << std::endl;
 
     return 0;
 }
