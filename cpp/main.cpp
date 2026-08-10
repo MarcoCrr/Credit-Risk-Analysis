@@ -71,7 +71,7 @@ int main() {
     RiskReport severe_report = RiskAnalyzer::analyze(portfolio, severe_recession);
 
 
-    std::cout << "\n=== Stress Testing ===\n";
+    std::cout << "\n\n=== Stress Testing ===\n";
 
     std::cout << "\nBaseline\n";
     std::cout << "Expected Loss: "
