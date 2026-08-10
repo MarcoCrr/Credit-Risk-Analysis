@@ -15,9 +15,12 @@ RiskReport RiskAnalyzer::analyze(
     // Apply PD stress
     for (auto& loan : stressed)
     {
-        loan.pd = std::min(
+        constexpr double PD_EPSILON = 1e-6;
+
+        loan.pd = std::clamp(
             loan.pd * scenario.pd_multiplier,
-            1.0);
+            PD_EPSILON,
+            1.0 - PD_EPSILON);
     }
 
     // Monte Carlo
