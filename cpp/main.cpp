@@ -43,28 +43,59 @@ int main() {
     // Build portfolio
     auto portfolio = Portfolio::build(X_test, probs);
     
-    // Correlated defaults (old)
-    // double rho = 0.2;  // 0.1–0.3
-    // auto losses = Simulator::run_correlated(portfolio, 1000, rho);
 
+    // Hypothetical stress assumptions
     Scenario baseline{
         "Baseline",
         1.0, // pd_multiplier
         0.2, // rho
         1.0  // lgd_multiplier
-        };
+    };
+
+    Scenario mild_recession{
+        "Mild recession",
+        1.25,
+        0.25,
+        1.0
+    };
+
+    Scenario severe_recession{
+        "Severe recession",
+        1.75,
+        0.35,
+        1.0
+    };
 
     RiskReport report = RiskAnalyzer::analyze(portfolio, baseline);
+    RiskReport mild_report = RiskAnalyzer::analyze(portfolio, mild_recession);
+    RiskReport severe_report = RiskAnalyzer::analyze(portfolio, severe_recession);
 
-    // Risk metrics
+
+    std::cout << "\n=== Stress Testing ===\n";
+
+    std::cout << "\nBaseline\n";
     std::cout << "Expected Loss: "
             << report.expected_loss << std::endl;
-
     std::cout << "VaR 95%: "
             << report.var95 << std::endl;
-
     std::cout << "VaR 99%: "
             << report.var99 << std::endl;
+
+    std::cout << "\nMild Recession\n";
+    std::cout << "Expected Loss: "
+            << mild_report.expected_loss << std::endl;
+    std::cout << "VaR 95%: "
+            << mild_report.var95 << std::endl;
+    std::cout << "VaR 99%: "
+            << mild_report.var99 << std::endl;
+
+    std::cout << "\nSevere Recession\n";
+    std::cout << "Expected Loss: "
+            << severe_report.expected_loss << std::endl;
+    std::cout << "VaR 95%: "
+            << severe_report.var95 << std::endl;
+    std::cout << "VaR 99%: "
+            << severe_report.var99 << std::endl;
 
     return 0;
 }
